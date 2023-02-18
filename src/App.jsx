@@ -6,7 +6,7 @@ function App() {
   return (
     <div>
       <Navbar items={navbarItems} />
-      <ItemListContainer greeting="Start youy epic journey here" />
+      <ItemListContainer greeting="Start your epic journey here" />
     </div>
   );
 }
