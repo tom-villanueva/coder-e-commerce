@@ -13,7 +13,7 @@ const ItemDetailContainer = () => {
   }, [id]);
 
   return (
-    <section className="mx-4 mt-4 text-center text-gray-800 md:text-left lg:mt-0">
+    <section className="mx-4 mt-4 text-center text-gray-800 md:text-left lg:mt-0 lg:w-3/4">
       {product ? (
         <div className="block rounded-lg bg-white shadow-lg">
           <div className="flex flex-wrap items-center">
