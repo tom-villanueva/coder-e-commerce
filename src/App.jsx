@@ -1,13 +1,27 @@
 import ItemListContainer from './components/ItemListContainer/ItemListContainer';
-import Navbar from './components/Navbar/Navbar';
-import navbarItems from './NavbarItems';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Layout from './components/Layout/Layout';
+import ItemDetailContainer from './components/ItemDetailContainer/ItemDetailContainer';
+import { appRoutes } from './AppRoutes';
 
 function App() {
   return (
-    <div>
-      <Navbar items={navbarItems} />
-      <ItemListContainer greeting="Start your epic journey here" />
-    </div>
+    <Router>
+      <Routes>
+        <Route path={appRoutes.home} element={<Layout />}>
+          <Route index element={<ItemListContainer />} />
+
+          <Route path={appRoutes.category} element={<ItemListContainer />} />
+
+          <Route
+            path={appRoutes.itemDetail}
+            element={<ItemDetailContainer />}
+          />
+
+          <Route path="*" element={<h1>No encontrado!!!! 404</h1>} />
+        </Route>
+      </Routes>
+    </Router>
   );
 }
 
