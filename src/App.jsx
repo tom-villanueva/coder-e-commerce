@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Layout from './components/Layout/Layout';
 import ItemDetailContainer from './components/ItemDetailContainer/ItemDetailContainer';
 import { appRoutes } from './AppRoutes';
+import NotFoundRoute from './components/NotFoundRoute/NotFoundRoute';
 
 function App() {
   return (
@@ -18,7 +19,7 @@ function App() {
             element={<ItemDetailContainer />}
           />
 
-          <Route path="*" element={<h1>No encontrado!!!! 404</h1>} />
+          <Route path="*" element={<NotFoundRoute />} />
         </Route>
       </Routes>
     </Router>
