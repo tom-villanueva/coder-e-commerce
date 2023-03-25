@@ -1,6 +1,15 @@
+import {
+  addDoc,
+  collection,
+  doc,
+  updateDoc,
+  writeBatch,
+} from 'firebase/firestore';
 import React, { useEffect, useState } from 'react';
+import { useCart } from '../../context/CartContext';
+import { db } from '../../firebaseConfig';
 
-const CheckoutForm = () => {
+const CheckoutForm = ({ handleOrderId }) => {
   const [userData, setUserData] = useState({
     firstName: '',
     lastName: '',
@@ -10,6 +19,7 @@ const CheckoutForm = () => {
   });
 
   const [btnDisabled, setBtnDisabled] = useState(true);
+  const cart = useCart();
 
   const validateEmail = email => {
     const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
@@ -33,10 +43,48 @@ const CheckoutForm = () => {
     setUserData({ ...userData, [e.target.name]: e.target.value });
   };
 
+  const handleOnSubmit = async e => {
+    e.preventDefault();
+
+    const order = {
+      buyer: {
+        name: `${userData.firstName} ${userData.lastName}`,
+        email: userData.phone,
+        phone: userData.email,
+      },
+      items: cart.items,
+      total: cart.getTotalItemsPrice(),
+    };
+
+    let orderCollectionRef = collection(db, 'orders');
+
+    addDoc(orderCollectionRef, order)
+      .then(res => {
+        handleOrderId(res.id);
+      })
+      .catch(err => console.error(err));
+
+    const batch = writeBatch(db);
+
+    cart.items.forEach(product => {
+      let refDoc = doc(db, 'products', product.id);
+
+      batch.update(refDoc, { stock: product.stock - product.quantity });
+    });
+
+    await batch.commit();
+
+    // Clear cart after all updates have been performed
+    cart.clearItems();
+  };
+
   return (
-    <>
+    <form
+      onSubmit={handleOnSubmit}
+      className="block w-full rounded-lg bg-white py-6 px-6 shadow-lg"
+    >
       <label
-        for="firstNameInput"
+        htmlFor="firstNameInput"
         className="mb-2 block text-sm font-medium text-purple-900"
       >
         Nombre
@@ -52,7 +100,7 @@ const CheckoutForm = () => {
       />
 
       <label
-        for="lastNameInput"
+        htmlFor="lastNameInput"
         className="mb-2 block text-sm font-medium text-purple-900"
       >
         Apellido
@@ -68,7 +116,7 @@ const CheckoutForm = () => {
       />
 
       <label
-        for="telefonoInput"
+        htmlFor="telefonoInput"
         className="mb-2 block text-sm font-medium text-purple-900"
       >
         Teléfono
@@ -84,7 +132,7 @@ const CheckoutForm = () => {
       />
       {/* Email */}
       <label
-        for="emailInput"
+        htmlFor="emailInput"
         className="mb-2 block text-sm font-medium text-purple-900"
       >
         Email
@@ -100,7 +148,7 @@ const CheckoutForm = () => {
       />
 
       <label
-        for="emailConfirmationInput"
+        htmlFor="emailConfirmationInput"
         className="mb-2 block text-sm font-medium text-purple-900"
       >
         Repita email
@@ -118,11 +166,11 @@ const CheckoutForm = () => {
       <button
         className="mt-2 inline-block rounded bg-purple-600 px-7 py-3 text-sm font-medium uppercase leading-snug text-white shadow-md transition duration-150 ease-in-out hover:bg-purple-800 hover:shadow-lg focus:bg-purple-800 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-purple-800 active:shadow-lg disabled:bg-slate-50 disabled:text-gray-500"
         disabled={btnDisabled}
-        onClick={() => console.log('AA')}
+        type="submit"
       >
         Comprar
       </button>
-    </>
+    </form>
   );
 };
 
