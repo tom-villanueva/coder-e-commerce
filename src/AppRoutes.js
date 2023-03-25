@@ -3,4 +3,5 @@ export const appRoutes = {
   cart: '/cart',
   itemDetail: '/item/:id',
   category: '/category/:category',
+  checkout: '/checkout',
 };

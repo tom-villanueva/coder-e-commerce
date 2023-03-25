@@ -5,6 +5,13 @@ import ItemCount from '../ItemCount/ItemCount';
 const ItemDetail = ({ product }) => {
   const cart = useCart();
 
+  const onAdd = count => {
+    cart.addItem({
+      ...product,
+      quantity: count,
+    });
+  };
+
   return (
     <div className="block rounded-lg bg-white shadow-lg">
       <div className="flex flex-wrap items-center">
@@ -21,9 +28,9 @@ const ItemDetail = ({ product }) => {
             <p className="mb-6 pb-2 text-gray-500">{product.description}</p>
             <p className="mb-6 pb-2 text-black">{`$${product.price}`}</p>
             <ItemCount
-              stock={5}
-              initial={cart.getItem().quantity}
-              onAdd={count => console.log(count)}
+              stock={product.stock}
+              initial={cart.getItem(product.id)?.quantity}
+              onAdd={onAdd}
             />
           </div>
         </div>

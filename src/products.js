@@ -119,13 +119,13 @@ export const fetchProducts = (category = undefined) => {
     return new Promise((resolve, reject) => {
       setTimeout(() => {
         resolve(products.filter(product => product.category === category));
-      }, 2000);
+      }, 500);
     });
   } else {
     return new Promise((resolve, reject) => {
       setTimeout(() => {
         resolve(products);
-      }, 2000);
+      }, 500);
     });
   }
 };
@@ -134,6 +134,6 @@ export const fetchProduct = id => {
   return new Promise((resolve, reject) => {
     setTimeout(() => {
       resolve(products.find(product => product.id === Number(id)));
-    }, 2000);
+    }, 500);
   });
 };

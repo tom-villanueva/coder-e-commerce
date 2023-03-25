@@ -5,6 +5,8 @@ import ItemDetailContainer from './components/ItemDetailContainer/ItemDetailCont
 import { appRoutes } from './AppRoutes';
 import NotFoundRoute from './components/NotFoundRoute/NotFoundRoute';
 import CartContextProvider from './context/CartContext';
+import CartContainer from './components/CartContainer/CartContainer';
+import CheckoutContainer from './components/CheckoutContainer/CheckoutContainer';
 
 function App() {
   return (
@@ -20,6 +22,10 @@ function App() {
               path={appRoutes.itemDetail}
               element={<ItemDetailContainer />}
             />
+
+            <Route path={appRoutes.cart} element={<CartContainer />} />
+
+            <Route path={appRoutes.checkout} element={<CheckoutContainer />} />
 
             <Route path="*" element={<NotFoundRoute />} />
           </Route>
