@@ -6,6 +6,7 @@ import {
   writeBatch,
 } from 'firebase/firestore';
 import React, { useEffect, useState } from 'react';
+import Swal from 'sweetalert2';
 import { useCart } from '../../context/CartContext';
 import { db } from '../../firebaseConfig';
 
@@ -43,9 +44,7 @@ const CheckoutForm = ({ handleOrderId }) => {
     setUserData({ ...userData, [e.target.name]: e.target.value });
   };
 
-  const handleOnSubmit = async e => {
-    e.preventDefault();
-
+  const firebaseSubmit = async () => {
     const order = {
       buyer: {
         name: `${userData.firstName} ${userData.lastName}`,
@@ -76,13 +75,37 @@ const CheckoutForm = ({ handleOrderId }) => {
 
     // Clear cart after all updates have been performed
     cart.clearItems();
+
+    Swal.fire({
+      title: 'Purchased!',
+      icon: 'success',
+      timer: 2500,
+      showConfirmButton: false,
+      position: 'top-end',
+      backdrop: false,
+    });
+  };
+
+  const handleOnSubmit = async e => {
+    e.preventDefault();
+
+    Swal.fire({
+      title: `Are you sure you want to purchase?`,
+      showDenyButton: true,
+      showCancelButton: true,
+      confirmButtonText: 'Yes',
+      denyButtonText: `No`,
+    }).then(result => {
+      if (result.isConfirmed) {
+        firebaseSubmit();
+      } else if (result.isDenied) {
+        Swal.fire('Not purchased!', '', 'info');
+      }
+    });
   };
 
   return (
-    <form
-      onSubmit={handleOnSubmit}
-      className="block w-full rounded-lg bg-white py-6 px-6 shadow-lg"
-    >
+    <form onSubmit={handleOnSubmit} className="px-6">
       <label
         htmlFor="firstNameInput"
         className="mb-2 block text-sm font-medium text-purple-900"

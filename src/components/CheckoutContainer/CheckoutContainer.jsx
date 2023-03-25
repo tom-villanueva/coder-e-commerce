@@ -4,6 +4,7 @@ import CheckoutBrief from './CheckoutBrief';
 import CheckoutForm from './CheckoutForm';
 import { appRoutes } from '../../AppRoutes';
 import { Link } from 'react-router-dom';
+import CartList from '../CartContainer/CartList';
 
 const CheckoutContainer = () => {
   const [orderId, setOrderId] = useState('');
@@ -29,10 +30,17 @@ const CheckoutContainer = () => {
   }
 
   return (
-    <div className="mb-6 flex w-full flex-col justify-around px-24">
+    <div className="mx-6 mb-6 flex w-full flex-col justify-around bg-white lg:mx-24">
       <h1 className="mb-6 pb-2 text-center text-lg">Checkout</h1>
       {orderId === '' ? (
-        <CheckoutForm handleOrderId={handleOrderId} />
+        <div className="flex flex-wrap items-center">
+          <div className="w-full lg:w-6/12 xl:w-4/12">
+            <CheckoutForm handleOrderId={handleOrderId} />
+          </div>
+          <div className="lg:w-6/12 xl:w-8/12">
+            <CartList />
+          </div>
+        </div>
       ) : (
         <CheckoutBrief orderId={orderId} />
       )}

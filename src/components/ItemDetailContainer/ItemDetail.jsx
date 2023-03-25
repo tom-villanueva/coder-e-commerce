@@ -1,14 +1,28 @@
 import React from 'react';
 import { useCart } from '../../context/CartContext';
 import ItemCount from '../ItemCount/ItemCount';
+import Swal from 'sweetalert2';
 
 const ItemDetail = ({ product }) => {
   const cart = useCart();
 
   const onAdd = count => {
-    cart.addItem({
-      ...product,
-      quantity: count,
+    Swal.fire({
+      title: `Are you sure you want to add ${product.name} x ${count} to cart?`,
+      showDenyButton: true,
+      showCancelButton: true,
+      confirmButtonText: 'Yes',
+      denyButtonText: `No`,
+    }).then(result => {
+      if (result.isConfirmed) {
+        cart.addItem({
+          ...product,
+          quantity: count,
+        });
+        Swal.fire('Product added to cart!', '', 'success');
+      } else if (result.isDenied) {
+        Swal.fire('Product not added to cart!', '', 'info');
+      }
     });
   };
 

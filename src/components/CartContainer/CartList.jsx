@@ -2,12 +2,12 @@ import React from 'react';
 import { useCart } from '../../context/CartContext';
 import { TrashIcon } from '@heroicons/react/24/solid';
 
-const CartList = () => {
+const CartList = ({ inCart }) => {
   const cart = useCart();
 
   return (
-    <>
-      <ul className="w-full">
+    <div className="flex w-full flex-col px-6">
+      <ul>
         {cart.items.map(item => (
           <li
             key={item.id}
@@ -17,16 +17,18 @@ const CartList = () => {
             <p>{item.name}</p>
             <p>{` X ${item.quantity}`}</p>
             <p>{`$${item.price}`}</p>
-            <button onClick={() => cart.deleteItem(item.id)}>
-              <TrashIcon className="h-5 w-5 text-indigo-600" />
-            </button>
+            {inCart && (
+              <button onClick={() => cart.deleteItem(item.id)}>
+                <TrashIcon className="h-5 w-5 text-indigo-600" />
+              </button>
+            )}
           </li>
         ))}
       </ul>
       <div className="mb-6 mr-6 flex w-full justify-end font-bold md:mr-12">
         {`Total: $${cart.getTotalItemsPrice()}`}
       </div>
-    </>
+    </div>
   );
 };
 
