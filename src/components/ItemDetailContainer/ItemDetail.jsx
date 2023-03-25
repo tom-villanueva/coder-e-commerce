@@ -27,6 +27,7 @@ const ItemDetail = ({ product }) => {
             <h2 className="mb-6 pb-2 text-3xl font-bold">{product.name}</h2>
             <p className="mb-6 pb-2 text-gray-500">{product.description}</p>
             <p className="mb-6 pb-2 text-black">{`$${product.price}`}</p>
+            <p className="mb-6 pb-2 text-black">{`Stock: ${product.stock}`}</p>
             <ItemCount
               stock={product.stock}
               initial={cart.getItem(product.id)?.quantity}
