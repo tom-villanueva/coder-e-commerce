@@ -3,6 +3,8 @@ import { useParams } from 'react-router-dom';
 import { fetchProduct } from '../../products';
 import LoadingSpinner from '../LoadingSpinner/LoadingSpinner';
 import ItemDetail from './ItemDetail';
+import { getDoc, collection, doc } from 'firebase/firestore';
+import { db } from '../../firebaseConfig';
 
 const ItemDetailContainer = () => {
   const { id } = useParams();
@@ -10,7 +12,14 @@ const ItemDetailContainer = () => {
   const [product, setProduct] = useState(null);
 
   useEffect(() => {
-    fetchProduct(id).then(data => setProduct(data));
+    const itemCollection = collection(db, 'products');
+    const ref = doc(itemCollection, id);
+    getDoc(ref).then(res => {
+      setProduct({
+        ...res.data(),
+        id: res.id,
+      });
+    });
   }, [id]);
 
   return (

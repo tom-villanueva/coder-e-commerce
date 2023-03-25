@@ -4,6 +4,9 @@ import { fetchProducts } from '../../products';
 import ItemList from '../ItemList/ItemList';
 import LoadingSpinner from '../LoadingSpinner/LoadingSpinner';
 import { useParams } from 'react-router-dom';
+import { db } from '../../firebaseConfig';
+
+import { collection, getDocs, query, where } from 'firebase/firestore';
 
 const ItemListContainer = () => {
   const { category } = useParams();
@@ -12,10 +15,22 @@ const ItemListContainer = () => {
   const [greeting, setGreeting] = useState('');
 
   useEffect(() => {
-    setProducts([]);
-    fetchProducts(category).then(data => {
-      setProducts(data);
-      setGreeting(`Check out all our ${category ?? 'products'}!`);
+    setGreeting(`Check out all our ${category ?? 'products'}!`);
+    const itemsCollection = collection(db, 'products');
+
+    const consulta = category
+      ? getDocs(query(itemsCollection, where('category', '==', category)))
+      : getDocs(itemsCollection);
+
+    consulta.then(res => {
+      let products = res.docs.map(product => {
+        return {
+          ...product.data(),
+          id: product.id,
+        };
+      });
+
+      setProducts(products);
     });
   }, [category]);
 
