@@ -3,19 +3,19 @@ import React, { createContext, useContext, useState } from 'react';
 const CartContext = createContext();
 
 const CartContextProvider = ({ children }) => {
-  const [cart, setCart] = useState([]);
+  const [items, setItems] = useState([]);
 
   const itemExists = id => {
-    return cart.some(item => item.id === id);
+    return items.some(item => item.id === id);
   };
 
   const addItem = item => {
     const isInCart = itemExists(item.id);
 
     if (isInCart) {
-      const filteredCartItems = cart.filter(i => i.id === item.id);
+      const filteredCartItems = items.filter(i => i.id !== item.id);
 
-      setCart([
+      setItems([
         ...filteredCartItems,
         {
           ...item,
@@ -23,41 +23,42 @@ const CartContextProvider = ({ children }) => {
         },
       ]);
     } else {
-      setCart([...cart, item]);
+      setItems([...items, item]);
     }
   };
 
   const deleteItem = id => {
-    setCart(cart.filter(item => item.id === id));
+    setItems(items.filter(item => item.id !== id));
   };
 
-  const clear = () => {
-    setCart([]);
+  const clearItems = () => {
+    setItems([]);
   };
 
   const getItem = id => {
-    return cart.find(item => item.id === id);
+    return items.find(item => item.id === id);
   };
 
   const getTotalItems = () => {
-    return cart.reduce((acc, item) => acc + item.quantity, 0);
+    return items.reduce((acc, item) => acc + item.quantity, 0);
   };
 
-  const getTotalPrice = () => {
-    return cart.reduce((acc, item) => acc + item.quantity * item.price, 0);
+  const getTotalItemsPrice = () => {
+    return items.reduce((acc, item) => acc + item.quantity * item.price, 0);
   };
 
-  let data = {
+  let cart = {
+    items,
     itemExists,
     addItem,
     deleteItem,
-    clear,
+    clearItems,
     getItem,
     getTotalItems,
-    getTotalPrice,
+    getTotalItemsPrice,
   };
 
-  return <CartContext.Provider value={data}>{children}</CartContext.Provider>;
+  return <CartContext.Provider value={cart}>{children}</CartContext.Provider>;
 };
 
 export const useCart = () => {
