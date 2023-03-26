@@ -9,8 +9,10 @@ import React, { useEffect, useState } from 'react';
 import Swal from 'sweetalert2';
 import { useCart } from '../../context/CartContext';
 import { db } from '../../firebaseConfig';
+import Backdrop from '../Backdrop/Backdrop';
 
 const CheckoutForm = ({ handleOrderId }) => {
+  const [isLoading, setIsLoading] = useState(false);
   const [userData, setUserData] = useState({
     firstName: '',
     lastName: '',
@@ -45,45 +47,58 @@ const CheckoutForm = ({ handleOrderId }) => {
   };
 
   const firebaseSubmit = async () => {
+    setIsLoading(true);
+
     const order = {
       buyer: {
         name: `${userData.firstName} ${userData.lastName}`,
-        email: userData.phone,
-        phone: userData.email,
+        email: userData.email,
+        phone: userData.phone,
+        date: new Date(),
       },
       items: cart.items,
       total: cart.getTotalItemsPrice(),
     };
 
-    let orderCollectionRef = collection(db, 'orders');
+    try {
+      let orderCollectionRef = collection(db, 'orders');
 
-    addDoc(orderCollectionRef, order)
-      .then(res => {
-        handleOrderId(res.id);
-      })
-      .catch(err => console.error(err));
+      const newProduct = await addDoc(orderCollectionRef, order);
 
-    const batch = writeBatch(db);
+      const batch = writeBatch(db);
 
-    cart.items.forEach(product => {
-      let refDoc = doc(db, 'products', product.id);
+      cart.items.forEach(product => {
+        let refDoc = doc(db, 'products', product.id);
 
-      batch.update(refDoc, { stock: product.stock - product.quantity });
-    });
+        batch.update(refDoc, { stock: product.stock - product.quantity });
+      });
 
-    await batch.commit();
+      await batch.commit();
 
-    // Clear cart after all updates have been performed
-    cart.clearItems();
+      cart.clearItems();
 
-    Swal.fire({
-      title: 'Purchased!',
-      icon: 'success',
-      timer: 2500,
-      showConfirmButton: false,
-      position: 'top-end',
-      backdrop: false,
-    });
+      Swal.fire({
+        title: 'Purchased!',
+        icon: 'success',
+        timer: 3500,
+        showConfirmButton: false,
+        position: 'top-end',
+        backdrop: false,
+      });
+
+      handleOrderId(newProduct.id);
+    } catch (error) {
+      Swal.fire({
+        title: `Error in purchase! ${error}`,
+        icon: 'error',
+        timer: 3500,
+        showConfirmButton: false,
+        position: 'top-end',
+        backdrop: false,
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleOnSubmit = async e => {
@@ -106,6 +121,7 @@ const CheckoutForm = ({ handleOrderId }) => {
 
   return (
     <form onSubmit={handleOnSubmit} className="px-6">
+      {isLoading && <Backdrop />}
       <label
         htmlFor="firstNameInput"
         className="mb-2 block text-sm font-medium text-purple-900"
