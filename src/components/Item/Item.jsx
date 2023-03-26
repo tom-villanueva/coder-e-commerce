@@ -23,8 +23,6 @@ const Item = ({ product }) => {
             to={`/item/${product.id}`}
             type="button"
             className="inline-block rounded bg-purple-300 px-6 pt-2.5 pb-2 text-xs font-medium uppercase leading-normal text-zinc-600 shadow-md shadow-purple-500 transition duration-150 ease-in-out hover:bg-purple-600 hover:text-zinc-100 hover:shadow-lg hover:shadow-purple-700 focus:bg-purple-600 focus:shadow-purple-700 focus:outline-none focus:ring-0 active:bg-purple-700 active:shadow-indigo-500"
-            data-te-ripple-init
-            data-te-ripple-color="light"
           >
             Ver más
           </Link>
